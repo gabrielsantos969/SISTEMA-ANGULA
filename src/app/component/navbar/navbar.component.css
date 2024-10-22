@@ -1,0 +1,8 @@
+.navbar-footer {
+    width: auto; /* Ou defina um valor específico, se necessário */
+    max-width: 100%; /* Para garantir que não ultrapasse a largura da navbar */
+    background: #5a9edf !important; /* Cor de fundo clara */
+    color: #FFF;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.4); /* Sombra para destacar o footer */
+    border-radius: 5px;
+}

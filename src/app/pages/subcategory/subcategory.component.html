@@ -1,0 +1,63 @@
+@if(isLoadingCategory){
+    <!-- Pin de Carregamento para tabela categorias -->
+    <div class="d-flex justify-content-center my-4">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+    <!-- Fim Pin Carregamento De Tabela Categoria -->
+}@else {
+<!-- subcategory.component.html -->
+
+<div class="row">
+    <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center">
+        <button class="btn mb-3 back-page" (click)="goBack()">
+            <i class="fa-solid fa-chevron-left "></i>
+        </button>
+        <div class="flex-grow-1 text-center">
+            <h1>{{ categoryWithSubcategories.nm_Category }}</h1>
+        </div>
+    </div>
+    <p><strong>Descrição:</strong> {{ categoryWithSubcategories.ds_Category }}</p>
+    <hr>
+    <div class="d-flex justify-content-between align-items-center">
+        <h5 class="text-center">Subcategorias</h5>
+        <button class="btn btn-success circle" title="Adicionar SubCategoria"><i class="fa-solid fa-plus"></i></button>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr class="text-center align-middle">
+            <th>Nome</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @if(hasSubCategories){
+            @for(subcategory of paginatedSubCategories; track $index){
+                <tr class="text-center align-middle">
+                    <td>{{ subcategory.nm_SubCategory }}</td>
+                </tr>
+            }
+        }@else{
+            <tr class="text-center align-middle">
+                <td colspan="1">Sem Subcategorias</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <div class="pagination d-flex justify-content-center align-items-center my-4">
+        <button class="btn btn-primary me-2" (click)="prevPageSubCategory()" [disabled]="currentPageSubCategory === 1">
+        <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <span class="mx-2 text-muted">Página {{ currentPageSubCategory }} de {{ totalPagesSubCategory }}</span>
+        <button class="btn btn-primary ms-2" (click)="nextPageSubCategory()" [disabled]="currentPageSubCategory >= totalPagesSubCategory">
+        <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+    </div>
+</div>
+
+}
+
+  

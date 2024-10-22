@@ -1,0 +1,188 @@
+<div class="d-flex justify-content-between align-items-center">
+    <h1 class="text-center">Lista de Categorias</h1>
+    <!-- Botão para abrir o modal de cadastro -->
+    <button class="btn btn-success circle" (click)="openCreateModal()" title="Adicionar Categoria"><i class="fa-solid fa-plus"></i></button>
+</div>
+
+<!-- Modal de Cadastro de Categoria -->
+<div class="modal fade" tabindex="-1" role="dialog" [ngClass]="{'show': showCreateModal}" [ngStyle]="{'display': showCreateModal ? 'block' : 'none'}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Cadastrar Categoria
+                </h5>
+                <button type="button" class="close-modal" (click)="closeCreateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="createCategory()">
+                    <div class="form-group">
+                        <label for="categoryName">Nome da Categoria</label>
+                        <input type="text" class="form-control" id="categoryName" [(ngModel)]="newCategory.nm_Category" name="nm_Category" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryDescription">Descrição da Categoria</label>
+                        <textarea class="form-control" id="categoryDescription" [(ngModel)]="newCategory.ds_Category" name="ds_Category" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2" [disabled]="isLoadingCadastroCategory">
+                        @if(isLoadingCadastroCategory){
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        }
+                        {{ isLoadingCadastroCategory ? 'Cadastrando...' : 'Cadastrar'  }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fim Modal de cadastro de categoria  -->
+
+<!-- Inicio Modal de atualização categoria -->
+<div class="modal fade" tabindex="-1" role="dialog" [ngClass]="{'show': showUpdateModal}" [ngStyle]="{'display': showUpdateModal ? 'block' : 'none'}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Atualizar Categoria
+                </h5>
+                <button type="button" class="close-modal" (click)="closeUpdateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form (ngSubmit)="updateCategory()">
+                    <div class="form-group" style="display: none;">
+                        <label for="idCategory">Id</label>
+                        <input type="text" class="form-control" id="idCategory" [(ngModel)]="selectedCategory.id" name="id">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryName">Nome da Categoria</label>
+                        <input type="text" class="form-control" id="categoryName" [(ngModel)]="selectedCategory.nm_Category" name="nm_Category" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryDescription">Descrição da Categoria</label>
+                        <textarea class="form-control" id="categoryDescription" [(ngModel)]="selectedCategory.ds_Category" name="ds_Category" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2" [disabled]="isLoadingUpdateCategory">
+                        @if(isLoadingUpdateCategory){
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        }
+                        {{ isLoadingUpdateCategory ? 'Atualizando...' : 'Atualizar' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fim do Modal de Update -->
+
+<!-- Inicio Modal de Confirmação de deleção -->
+<div class="modal fade" tabindex="-1" role="dialog" [ngClass]="{'show': showDeleteModal}" [ngStyle]="{'display': showDeleteModal ? 'block' : 'none'}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Confirmar Exclusão</h5>
+            <button type="button" class="close-modal" (click)="closeDeleteModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Tem certeza de que deseja deletar o item {{ selectedCategory.nm_Category }}?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeDeleteModal()">Cancelar</button>
+            <button 
+            class="btn btn-danger" 
+            [disabled]="isButtonDisabled" 
+            (click)="confirmDelete(selectedCategory)"
+            style="color: #eed8d8;"
+            [ngStyle]="{'background': gradientBackground }">
+            {{ countdownDisplay || 'Confirmar' }}
+        </button>
+        </div>
+        </div>
+    </div>
+    </div>
+<!-- Fim Modal de Confirmação de deleção -->
+
+<hr><br>
+
+@if(isLoadingCategory){
+    <!-- Pin de Carregamento para tabela categorias -->
+    <div class="d-flex justify-content-center my-4">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+    <!-- Fim Pin Carregamento De Tabela Categoria -->
+}@else{
+    <table class="table table-striped">
+        <thead>
+            <tr class="text-center align-middle">
+                <th (click)="sortByName()" style="cursor: pointer;">
+                    Category Name
+                    <span *ngIf="sortOrder === 'asc'"><i class="fa-solid fa-arrow-up-short-wide"></i></span>
+                    <span *ngIf="sortOrder === 'desc'"><i class="fa-solid fa-arrow-down-short-wide"></i></span>
+                </th>
+                <th>Description Category</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(categoryWithSubcategories.length > 0){
+                @for(category of paginatedCategories; track $index){
+
+                    <tr class="text-center align-middle" >
+                        <td style="max-width: 150px; word-wrap: break-word; white-space: normal;">{{ category.nm_Category.toUpperCase() }}</td>
+                        <td style="max-width: 250px; word-wrap: break-word; white-space: normal;">
+                            @if(category.ds_Category.length > 25 && !isExpanded[$index]){
+                                <span>
+                                    {{ category.ds_Category | truncate:25 }}
+                                </span>
+                            }
+                            @if(category.ds_Category.length > 25 && isExpanded[$index]){
+                                <span>
+                                    {{ category.ds_Category }}
+                                </span>
+                            }
+                            @if(category.ds_Category.length <= 25){
+                                {{ category.ds_Category }}
+                            }
+                            @if(category.ds_Category.length > 25){
+                                <button type="button" (click)="toggleText($index)" class="btn btn-link" style="padding: 0; border: none; background: none;">
+                                    {{ isExpanded[$index] ? 'Ler menos' : 'Ler mais' }}
+                                </button>
+                            }
+                        </td>
+                        <td>
+                            <div [ngClass]="{'btn-group': !isMobile, 'btn-group-vertical': isMobile}" role="group" >
+                                <button class="btn btn-primary" (click)="openUpdateModal(category)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-warning" (click)="openViewSubCategory(category)">
+                                    <i class="fas fa-eye" style="color: #FFF;"></i>
+                                </button>
+                                <button class="btn btn-danger" (click)="openDeleteModal(category)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            @else {
+                <tr class="text-center align-middle">
+                    <td colspan="3">Sem categorias</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Paginação da tabela de categoria -->
+    <div class="pagination d-flex justify-content-center align-items-center my-4">
+        <button class="btn btn-primary me-2" (click)="prevPageCategory()" [disabled]="currentPageCategory === 1">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <span class="mx-2 text-muted">Página {{ currentPageCategory }} de {{ totalPagesCategory }}</span>
+        <button class="btn btn-primary ms-2" (click)="nextPageCategory()" [disabled]="currentPageCategory >= totalPagesCategory">
+            <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>   
+    <!-- Fim Paginação da tabela de categoria -->  
+}
