@@ -13,7 +13,7 @@ import { Location } from '@angular/common';
 })
 export class SubcategoryComponent implements OnInit{
 
-  public categoryWithSubcategories!: CategoryWithSubcategory;
+  categoryWithSubcategories!: CategoryWithSubcategory;
 
   currentPageSubCategory = 1;
   itemsPerPageSubCategory = 10;
@@ -23,7 +23,7 @@ export class SubcategoryComponent implements OnInit{
 
   hasSubCategories: boolean = false;
 
-  constructor(private categoryService: CategoryService, private router: ActivatedRoute, private location: Location){}
+  constructor(readonly categoryService: CategoryService, readonly router: ActivatedRoute, readonly location: Location){}
   
   ngOnInit(): void {
     this.router.queryParams.subscribe(async params => {

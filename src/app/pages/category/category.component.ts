@@ -17,13 +17,6 @@ export class CategoryComponent implements OnInit{
 
   public categoryWithSubcategories: CategoryWithSubcategory[] = [];
 
-  countdown: number = 5; // Tempo da contagem regressiva em segundos
-  interval: any; // Armazenará o intervalo da contagem
-  isButtonDisabled: boolean = true; // Estado do botão
-  countdownDisplay: string = ''; // Para exibir a contagem
-  progress: number = 0; // Progresso do carregamento
-  gradientBackground: string = ''; // Para armazenar o estilo do gradiente
-
   isExpanded: boolean[] = [];
 
   isMobile: boolean = false;
@@ -50,14 +43,7 @@ export class CategoryComponent implements OnInit{
   ngOnInit(): void {
     this.checkScreenWidth();
     this.getCategoryWithSubcategories();
-    if (this.showDeleteModal) {
-      this.startCountdown();
-    }
-  }
 
-  ngOnDestroy() {
-    // Limpa o intervalo se o componente for destruído
-    clearInterval(this.interval);
   }
 
   sortByName() {
@@ -106,36 +92,9 @@ export class CategoryComponent implements OnInit{
   openDeleteModal(category: CategoryWithSubcategory){
     this.selectedCategory = category;
     this.showDeleteModal = true;
-    this.countdown = 5; // Reseta a contagem regressiva
-    this.countdownDisplay = `Confirmar (${this.countdown})`; // Inicializa a exibição para "Confirmar (5)"
-    this.isButtonDisabled = true; // Desabilita o botão
-    this.progress = 0; // Reseta o progresso
-    this.startCountdown(); // Inicia a contagem
   }
 
-  startCountdown() {
-    const totalTime = 5; // Tempo total da contagem em segundos
-    const intervalDuration = 100; // Atualiza a cada 100ms
-    let elapsedTime = 0; // Tempo decorrido em ms
-
-    this.interval = setInterval(() => {
-      elapsedTime += intervalDuration; // Incrementa o tempo decorrido
-      this.countdown = Math.ceil((totalTime - elapsedTime / 1000)); // Atualiza a contagem
-      this.progress = Math.min(100, (elapsedTime / (totalTime * 1000)) * 100); // Calcula o progresso
-
-      // Atualiza o gradiente do botão
-      this.gradientBackground = `linear-gradient(to right, red ${this.progress}%, transparent ${this.progress}%)`;
-      this.countdownDisplay = `Confirmar (${this.countdown})`; // Atualiza a exibição
-
-      if (this.countdown <= 0) {
-        clearInterval(this.interval);
-        this.isButtonDisabled = false; // Habilita o botão
-        this.countdownDisplay = 'Confirmar'; // Reseta o texto do botão
-        this.progress = 100; // Define o progresso como 100% quando a contagem termina
-        this.gradientBackground = `linear-gradient(to right, red 100%, transparent 100%)`; // Completa o gradiente
-      }
-    }, intervalDuration);
-  }
+  
 
   async confirmDelete(category: CategoryWithSubcategory){
     this.categoryWithSubcategories = this.categoryWithSubcategories.filter(sc => sc.id !== category.id);
@@ -145,7 +104,6 @@ export class CategoryComponent implements OnInit{
 
   closeDeleteModal(){
     this.showDeleteModal = false;
-    clearInterval(this.interval);
   }
 
   /* Fim para Modal de Deleção de categoria */
@@ -239,7 +197,9 @@ export class CategoryComponent implements OnInit{
   getCategoryWithSubcategories(): void{
     this.categoryService.getCategoryWithSubcategories().subscribe(
       response => {
-        this.categoryWithSubcategories = response.data;
+        console.log(response);
+        
+        this.categoryWithSubcategories = response;
         this.updateTotalPagesCategory();
         this.isLoadingCategory = false;
       },

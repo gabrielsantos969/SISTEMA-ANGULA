@@ -10,10 +10,10 @@ import { Response } from '../models/Response';
 })
 export class CategoryService {
 
-  private apiUrl = environment.urlApi;
-  private versionApi = environment.versionApi;
+  readonly apiUrl = environment.urlApi;
+  readonly versionApi = environment.versionApi;
 
-  constructor(private http: HttpClient) { }
+  constructor(readonly http: HttpClient) { }
 
   getCategories(): Observable<Response<CategoryListar[]>>{
     return this.http.get<Response<CategoryListar[]>>(`${this.apiUrl}/${this.versionApi}/category`);
@@ -27,8 +27,8 @@ export class CategoryService {
     return this.http.get<Response<CategoryWithSubcategory>>(`${this.apiUrl}/${this.versionApi}/category/subcategory/${categoryId}`);
   }
 
-  getCategoryWithSubcategories(): Observable<Response<CategoryWithSubcategory[]>>{
-    return this.http.get<Response<CategoryWithSubcategory[]>>(`${this.apiUrl}/${this.versionApi}/category/WithAllSubCategories`);
+  getCategoryWithSubcategories(): Observable<CategoryWithSubcategory[]>{
+    return this.http.get<CategoryWithSubcategory[]>(`${this.apiUrl}/${this.versionApi}/category/WithAllSubCategories`);
   }
 
   deleteCategory(categoryId: string): Observable<boolean>{

@@ -88,12 +88,10 @@
         <div class="modal-footer">
             <button class="btn btn-secondary" (click)="closeDeleteModal()">Cancelar</button>
             <button 
-            class="btn btn-danger" 
-            [disabled]="isButtonDisabled" 
+            class="btn btn-danger"  
             (click)="confirmDelete(selectedCategory)"
-            style="color: #eed8d8;"
-            [ngStyle]="{'background': gradientBackground }">
-            {{ countdownDisplay || 'Confirmar' }}
+            style="color: #eed8d8;">
+            Confirmar
         </button>
         </div>
         </div>
